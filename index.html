@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AS IS Contract Wizard</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%230b5cad'/%3E%3Cpath d='M4 8l3 3 5-6' stroke='white' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div>
+      <h1>&ldquo;AS IS&rdquo; Contract Wizard</h1>
+      <p class="sub">Florida Realtors / Florida Bar ASIS-7x (Rev. 2/26) &mdash; answer the questions, get a filled PDF.</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="card hero">
+      <div class="progress"><div class="bar" id="bar"></div></div>
+      <p id="progressText" class="muted"></p>
+      <div class="actions">
+        <button class="primary" id="startBtn">Start questions</button>
+        <button id="generateBtn">Generate filled PDF</button>
+        <button class="ghost" id="resetBtn">Start over</button>
+      </div>
+      <p id="notice" class="notice" hidden></p>
+    </section>
+
+    <section class="card" id="previewCard" hidden>
+      <div class="row">
+        <h2>Filled contract</h2>
+        <a class="button primary" id="downloadLink" download>Download PDF</a>
+      </div>
+      <iframe id="preview" title="Filled contract preview"></iframe>
+    </section>
+
+    <section class="card">
+      <h2>Your answers</h2>
+      <p class="muted">Click any answer to change it. Blank items fall back to the form&rsquo;s own &ldquo;if left blank&rdquo; default.</p>
+      <div id="review"></div>
+    </section>
+  </main>
+
+  <dialog id="qDialog">
+    <form method="dialog" id="qForm" novalidate>
+      <div class="qhead">
+        <span id="qSection" class="chip"></span>
+        <span id="qCount" class="muted"></span>
+        <button type="button" class="x" id="closeBtn" aria-label="Close">&times;</button>
+      </div>
+      <div class="progress small"><div class="bar" id="qBar"></div></div>
+      <p id="qRef" class="ref"></p>
+      <label id="qLabel" class="qlabel" for="qInput"></label>
+      <div id="qBody"></div>
+      <p id="qHelp" class="help"></p>
+      <p id="qBlank" class="blank"></p>
+      <p id="qError" class="error" hidden></p>
+      <div class="qfoot">
+        <button type="button" id="backBtn">Back</button>
+        <span class="spacer"></span>
+        <button type="button" class="ghost" id="skipBtn">Skip</button>
+        <button type="submit" class="primary" id="nextBtn">Next</button>
+      </div>
+    </form>
+  </dialog>
+
+  <input type="file" id="templatePicker" accept="application/pdf" hidden>
+  <script src="vendor/pdf-lib.min.js"></script>
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
