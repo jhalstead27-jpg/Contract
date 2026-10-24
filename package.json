@@ -6,9 +6,11 @@
   "description": "Popup-question wizard that fills the Florida Realtors/Florida Bar AS IS Residential Contract (ASIS-7x)",
   "scripts": {
     "start": "npx --yes http-server -c-1 -p 8080 .",
-    "test": "node scripts/test.mjs"
+    "test": "node scripts/test.mjs",
+    "build": "node scripts/build.mjs"
   },
   "devDependencies": {
+    "esbuild": "^0.24.0",
     "pdf-lib": "1.17.1"
   }
 }

@@ -237,6 +237,8 @@ function renderReview() {
 
 // ------------------------------------------------------------- generate ---
 async function templateBytes() {
+  // The single-file build (scripts/build.mjs) embeds the template.
+  if (window.ASIS_TEMPLATE_B64) return Uint8Array.from(atob(window.ASIS_TEMPLATE_B64), (c) => c.charCodeAt(0));
   try {
     const res = await fetch(TEMPLATE_URL);
     if (res.ok) return await res.arrayBuffer();

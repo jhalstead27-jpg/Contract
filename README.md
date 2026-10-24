@@ -6,14 +6,20 @@ It fills the blanks and checks the boxes, then gives you a PDF to preview and do
 
 ## Run it
 
+**Easiest:** double-click `AS_IS_Contract_Wizard.html`. It is one self-contained file (code, styles and the
+contract template are all inside), so it works straight from disk, a shared drive or an email attachment.
+
+For development, serve the folder and open `index.html`:
+
 ```bash
 npm start            # serves http://localhost:8080
 ```
 
-Any static web server works (for example `python3 -m http.server`). It also works on GitHub Pages.
+`index.html` loads the code as ES modules, which browsers block on pages opened straight from disk.
+So double-clicking `index.html` does nothing; use the single file or a server.
+After changing anything in `src/`, `styles.css` or the template, rebuild the single file with `npm run build`.
+
 Answers are saved in the browser as you go. Close the popup at any time and pick up where you left off.
-If you open `index.html` straight from disk, the browser can't load the template on its own,
-so the app asks you to pick `assets/asis-7x.pdf`.
 
 ## What gets filled
 
