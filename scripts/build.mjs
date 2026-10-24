@@ -22,6 +22,11 @@ const swap = (from, to) => {
 };
 swap('<link rel="stylesheet" href="styles.css">', `<style>\n${css}</style>`);
 swap('<script src="vendor/pdf-lib.min.js"></script>', `<script>${pdfLib}</script>`);
+// pdf.js runs its worker on the main thread when window.pdfjsWorker exists,
+// which avoids loading a separate worker file (blocked on file:// pages).
+for (const f of ['pdf.min.js', 'pdf.worker.min.js']) {
+  swap(`<script src="vendor/${f}"></script>`, `<script>${inline(readFileSync('vendor/' + f, 'utf8'))}</script>`);
+}
 swap('<script type="module" src="src/app.js"></script>',
   `<script>window.ASIS_TEMPLATE_B64 = "${template}";</script>\n  <script>${app}</script>`);
 writeFileSync(out, html);

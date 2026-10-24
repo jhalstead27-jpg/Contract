@@ -28,11 +28,15 @@
     </section>
 
     <section class="card" id="previewCard" hidden>
-      <div class="row">
-        <h2>Filled contract</h2>
+      <h2>Filled contract</h2>
+      <div class="actions">
+        <button class="primary" id="shareBtn" hidden>Save / Share PDF</button>
         <a class="button primary" id="downloadLink" download>Download PDF</a>
+        <a class="button" id="openLink" target="_blank" rel="noopener">Open PDF</a>
       </div>
-      <iframe id="preview" title="Filled contract preview"></iframe>
+      <p class="muted small-note">On a phone, use <strong>Save / Share PDF</strong> and pick &ldquo;Save to Files&rdquo;, Drive, Mail or Messages.</p>
+      <p id="pagesStatus" class="muted"></p>
+      <div id="pages" aria-label="Filled contract pages"></div>
     </section>
 
     <section class="card">
@@ -67,6 +71,8 @@
 
   <input type="file" id="templatePicker" accept="application/pdf" hidden>
   <script src="vendor/pdf-lib.min.js"></script>
+  <script src="vendor/pdf.min.js"></script>
+  <script src="vendor/pdf.worker.min.js"></script>
   <script type="module" src="src/app.js"></script>
 </body>
 </html>

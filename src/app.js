@@ -7,6 +7,7 @@ const $ = (id) => document.getElementById(id);
 let answers = load();
 let current = 0; // index into QUESTIONS
 let pdfUrl = null;
+let pdfFile = null;
 
 function load() {
   try { return JSON.parse(localStorage.getItem(STORE)) || {}; } catch { return {}; }
@@ -275,17 +276,58 @@ async function generate() {
       notice(issues.join('\n'));
     }
     if (pdfUrl) URL.revokeObjectURL(pdfUrl);
-    pdfUrl = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
     const name = (answers.street || 'contract').replace(/[^\w]+/g, '_').replace(/^_|_$/g, '');
+    pdfFile = new File([bytes], `ASIS_${name}.pdf`, { type: 'application/pdf' });
+    pdfUrl = URL.createObjectURL(pdfFile);
     $('downloadLink').href = pdfUrl;
-    $('downloadLink').download = `ASIS_${name}.pdf`;
-    $('preview').src = pdfUrl;
+    $('downloadLink').download = pdfFile.name;
+    $('openLink').href = pdfUrl;
+    $('shareBtn').hidden = !canShareFile(pdfFile);
     $('previewCard').hidden = false;
     $('previewCard').scrollIntoView({ behavior: 'smooth' });
+    await renderPages(bytes);
   } catch (err) {
     notice('Could not build the PDF: ' + err.message);
   }
 }
+
+// Phones can't show a PDF inside the page, so draw each page with pdf.js.
+async function renderPages(bytes) {
+  const root = $('pages');
+  root.replaceChildren();
+  const lib = window.pdfjsLib;
+  if (!lib) { $('pagesStatus').textContent = 'Preview unavailable. Use Open PDF to view it.'; return; }
+  $('pagesStatus').textContent = 'Loading preview…';
+  try {
+    const doc = await lib.getDocument({ data: bytes.slice(0), isEvalSupported: false }).promise;
+    const width = Math.min(root.clientWidth || 800, 1000) * Math.min(window.devicePixelRatio || 1, 2);
+    for (let n = 1; n <= doc.numPages; n++) {
+      const page = await doc.getPage(n);
+      const viewport = page.getViewport({ scale: width / page.getViewport({ scale: 1 }).width });
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.floor(viewport.width);
+      canvas.height = Math.floor(viewport.height);
+      canvas.setAttribute('aria-label', `Page ${n} of ${doc.numPages}`);
+      root.append(canvas);
+      await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+    }
+    $('pagesStatus').textContent = `${doc.numPages} pages`;
+  } catch (err) {
+    $('pagesStatus').textContent = 'Preview unavailable (' + err.message + '). Use Open PDF to view it.';
+  }
+}
+
+function canShareFile(file) {
+  try { return !!navigator.canShare?.({ files: [file] }); } catch { return false; }
+}
+
+$('shareBtn').onclick = async () => {
+  try {
+    await navigator.share({ files: [pdfFile], title: pdfFile.name });
+  } catch (err) {
+    if (err.name !== 'AbortError') notice('Sharing failed: ' + err.message + '. Try Download PDF or Open PDF.');
+  }
+};
 
 $('startBtn').onclick = () => open();
 $('generateBtn').onclick = generate;
